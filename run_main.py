@@ -46,6 +46,7 @@ class Input_Generator:
         self.threads = args.threads
         self.prefix = args.prefix
         self.project = args.prefix
+        self.clean = False if args.keep else True
         self.deployment_root_dir = os.path.join(MEDIA_ROOT, self.technology)
         self.dir_branch = os.path.join(self.deployment_root_dir, self.prefix)
         self.dir = self.dir_branch
@@ -73,6 +74,9 @@ class Input_Generator:
 
         args.add_argument("--prefix", type=str, required=False, default="test")
         args.add_argument("--technology", type=str, required=False, default="ONT")
+        args.add_argument(
+            "--keep", type=bool, required=False, default=True, action="store_false"
+        )
 
         return args.parse_args()
 
@@ -124,10 +128,10 @@ class Input_Generator:
                 x: os.path.join(self.install_registry.METADATA["ROOT"], g)
                 for x, g in self.install_registry.METADATA.items()
             },
-            "technology": self.technology,
             "bin": self.install_registry.BINARIES,
             "taxid": self.taxid,
             "accid": self.accid,
+            "clean": self.clean,
         }
 
         for dr, g in ConstantsSettings.DIRS.items():
@@ -165,6 +169,7 @@ class RunMain:
         self.accid = config["accid"]
         self.threads = config["threads"]
         self.house_cleaning = True
+        self.clean = config["clean"]
 
         self.full_report = os.path.join(
             self.config["directories"][CS.PIPELINE_NAME_remapping], "full_report.csv"
@@ -288,7 +293,9 @@ class RunMain:
         self.remap_manager.run_mappings()
         self.remap_manager.merge_mapping_reports()
         self.remap_manager.collect_final_report_summary_statistics()
-        self.remap_manager.clean_mapping_files()
+
+        if self.clean:
+            self.remap_manager.clean_mapping_files()
 
     def run(self):
         self.deploy_REMAPPING()
