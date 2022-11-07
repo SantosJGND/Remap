@@ -74,9 +74,7 @@ class Input_Generator:
 
         args.add_argument("--prefix", type=str, required=False, default="test")
         args.add_argument("--technology", type=str, required=False, default="ONT")
-        args.add_argument(
-            "--keep", type=bool, required=False, default=True, action="store_false"
-        )
+        args.add_argument("--keep", required=False, default=True, action="store_false")
 
         return args.parse_args()
 
