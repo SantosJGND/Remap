@@ -45,9 +45,9 @@ class Input_Generator:
         self.technology = args.technology
         self.threads = args.threads
         self.prefix = args.prefix
-        self.project = args.prefix
+        self.project = args.project
         self.clean = False if args.keep else True
-        self.deployment_root_dir = os.path.join(MEDIA_ROOT, self.technology)
+        self.deployment_root_dir = os.path.join(MEDIA_ROOT, self.project)
         self.dir_branch = os.path.join(self.deployment_root_dir, self.prefix)
         self.dir = self.dir_branch
 
@@ -68,6 +68,7 @@ class Input_Generator:
         args = argparse.ArgumentParser()
         args.add_argument("--taxid", type=str, required=False, default="none")
         args.add_argument("--accid", type=str, required=False, default="none")
+        args.add_argument("--project", type=str, required=False, default="my_project")
         args.add_argument("--r1", type=str, required=True)
         args.add_argument("--r2", type=str, required=False, default="")
         args.add_argument("--threads", type=int, required=False, default=1)
@@ -252,10 +253,27 @@ class RunMain:
 
     def generate_targets(self):
         result_df = pd.DataFrame(columns=["qseqid", "taxid"])
+        taxid_list = []
+        accid_list = []
+
+        if "," in self.taxid:
+            taxid_list = self.taxid.split(",")
+        else:
+            taxid_list = [self.taxid]
+
+        if "," in self.accid:
+            accid_list = self.accid.split(",")
+        else:
+            accid_list = [self.accid]
+
+        if len(taxid_list) != len(accid_list):
+            taxid_list = [""] * len(accid_list) + taxid_list
+            accid_list = accid_list + [""] * len(taxid_list)
+
         if self.taxid:
-            result_df = pd.DataFrame([{"taxid": self.taxid, "qseqid": ""}])
+            result_df = pd.DataFrame([{"taxid": taxid_list, "qseqid": accid_list}])
         elif self.accid:
-            result_df = pd.DataFrame([{"qseqid": self.accid, "taxid": ""}])
+            result_df = pd.DataFrame([{"qseqid": accid_list, "taxid": taxid_list}])
 
         print(result_df)
 
