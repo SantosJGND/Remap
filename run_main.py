@@ -258,17 +258,17 @@ class RunMain:
 
         if "," in self.taxid:
             taxid_list = self.taxid.split(",")
-        else:
+        elif self.taxid != "none":
             taxid_list = [self.taxid]
 
         if "," in self.accid:
             accid_list = self.accid.split(",")
-        else:
+        elif self.accid != "none":
             accid_list = [self.accid]
 
         if len(taxid_list) != len(accid_list):
-            taxid_list = [""] * len(accid_list) + taxid_list
-            accid_list = accid_list + [""] * len(taxid_list)
+            taxid_list = ["none"] * len(accid_list) + taxid_list
+            accid_list = accid_list + ["none"] * len(taxid_list)
 
         if self.taxid:
             result_df = pd.DataFrame({"taxid": taxid_list, "qseqid": accid_list})
