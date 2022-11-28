@@ -271,9 +271,19 @@ class RunMain:
             accid_list = accid_list + ["none"] * len(taxid_list)
 
         if self.taxid:
-            result_df = pd.DataFrame({"taxid": taxid_list, "qseqid": accid_list})
+            result_df = pd.DataFrame(
+                {
+                    "taxid": taxid_list,
+                    "qseqid": accid_list,
+                }
+            )
         elif self.accid:
-            result_df = pd.DataFrame({"qseqid": accid_list, "taxid": taxid_list})
+            result_df = pd.DataFrame(
+                {
+                    "qseqid": accid_list,
+                    "taxid": taxid_list,
+                }
+            )
 
         print(result_df)
 

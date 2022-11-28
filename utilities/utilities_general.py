@@ -188,6 +188,9 @@ def process_class(r2, maxt=6):
     """
     Process classification results.
     """
+    if maxt == 0:
+        maxt = r2.shape[0]
+
     r2 = r2.drop_duplicates(subset=["taxid"], keep="first")
     r2 = r2.reset_index(drop=True)
     r2 = r2.sort_values("counts", ascending=False)

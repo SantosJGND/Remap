@@ -108,8 +108,8 @@ class Params_Illumina:
 
     CONSTANTS = {
         "minimum_coverage_threshold": 2,
-        "max_output_number": 15,
-        "taxid_limit": 12,
+        "max_output_number": 100,
+        "taxid_limit": 100,
         "sift_query": "phage",
         "assembly_contig_min_length": 300,
     }

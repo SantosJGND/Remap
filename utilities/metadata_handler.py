@@ -3,9 +3,9 @@ import os
 from typing import List
 
 import pandas as pd
-from utilities.utilities_general import merge_classes, scrape_description
-
 from modules.object_class import Remap_Target
+
+from utilities.utilities_general import merge_classes, scrape_description
 
 
 class Metadata_handler:
@@ -63,14 +63,20 @@ class Metadata_handler:
         max_remap: int = 15,
         taxid_limit: int = 12,
     ):
+        print("MAX REMAP", max_remap)
+        print("TAXID LIMIT", taxid_limit)
 
         self.process_reports(
             report_1,
             report_2,
         )
+        print("Merged targets")
+        print(self.rclass)
         self.merge_reports_clean(
             max_remap=max_remap,
         )
+
+        print("MERGED TARGETS SHAPE", self.merged_targets.shape)
 
         #######
         #######
@@ -85,7 +91,7 @@ class Metadata_handler:
         self.remap_targets = remap_targets
         self.remap_absent_taxid_list = remap_absent
 
-    def results_process(self, df: pd.DataFrame, sift: bool = True) -> pd.DataFrame:
+    def results_process(self, df: pd.DataFrame, sift: bool = False) -> pd.DataFrame:
         """
         Process results.
         merge df with metadata to create taxid columns.
@@ -94,6 +100,7 @@ class Metadata_handler:
         """
 
         df = self.merge_report_to_metadata(df)
+        print(df)
 
         df = self.map_hit_report(df)
 
@@ -101,7 +108,8 @@ class Metadata_handler:
             sifted_df = self.sift_report_filter(df, query=self.sift_query)
             self.sift_report = self.sift_summary(df, sifted_df)
             df = sifted_df
-
+        print("DDDD")
+        print(df)
         return df
 
     def get_metadata(self):
@@ -265,6 +273,9 @@ class Metadata_handler:
             left=merged_table, right=counts, on="taxid"
         ).drop_duplicates(subset="taxid")
 
+        print("Number of hits per taxid:")
+        print(new_table[["taxid", "description", "counts"]].sort_values("counts"))
+
         new_table = new_table.sort_values("counts", ascending=False)
 
         return new_table
@@ -274,8 +285,11 @@ class Metadata_handler:
         report_1: pd.DataFrame,
         report_2: pd.DataFrame,
     ):
+        print("processing")
+        print(report_1.shape)
         self.rclass = self.results_process(report_1)
         self.aclass = self.results_process(report_2)
+        print(self.rclass.shape)
 
     def merge_reports_clean(
         self,
